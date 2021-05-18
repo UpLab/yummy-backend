@@ -12,6 +12,15 @@ class MockDataService {
   findRecipeById(_id) {
     return this.recipeList.find((recipe) => recipe._id === _id);
   }
+
+  createRecipe(recipe) {
+    this.recipeList.unshift(recipe);
+    return recipe;
+  }
+
+  resetRecipes() {
+    this.recipeList = [];
+  }
 }
 
 export default new MockDataService();
