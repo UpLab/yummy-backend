@@ -1,0 +1,12 @@
+GET http://localhost:4000/
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIyIiwiZW1haWwiOiJqb2huQHVwbGFiLmlvIiwiaWF0IjoxNjIzNjg3MDg0LCJleHAiOjE2MjM2ODczODR9.QSWDc00hM33J-4WsBvWwB8KrD1YbF_FGcq2EERTh-eE
+
+###
+
+POST http://localhost:4000/login
+Content-Type: application/json
+
+{
+  "email": "ihor@uplab.io",
+  "password": "1234"
+}
