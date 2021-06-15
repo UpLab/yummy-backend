@@ -2,18 +2,20 @@ import authMiddleware from '../middlewares/auth';
 import UsersService from '../../services/UsersService';
 
 export default function addAuthRoutes(app) {
-  // TODO: remove this test route
-  app.get('/api/hello', authMiddleware, async (req, res) => {
-    const { email } = req.user;
-    return res.send(`Hello ${email}! ${1_000_000_000_000}`);
+  app.get('/api/auth/greet', authMiddleware, async (req, res) => {
+    const { email } = req.jwtUser;
+    return res.send(`Hello ${email}!`);
   });
 
-  app.post('/api/login', async (req, res) => {
+  app.get('/api/auth/me', authMiddleware, async (req, res) => {
+    return res.json(req.getUser());
+  });
+
+  app.post('/api/auth/login', async (req, res) => {
     const { email, password } = req.body;
     // TODO: validate email and password ?
     try {
-      const result = await UsersService.loginWithPassword({ email, password });
-      const { accessToken, refreshToken } = result;
+      const { accessToken, refreshToken } = await UsersService.loginWithPassword({ email, password });
       return res.json({ accessToken, refreshToken });
     } catch (error) {
       console.log(error);
@@ -21,7 +23,23 @@ export default function addAuthRoutes(app) {
     }
   });
 
-  app.post('/api/token', (req, res) => {
+  app.post('/api/auth/register', async (req, res) => {
+    const { email, password } = req.body;
+    // TODO: validate email and password ?
+    try {
+      await UsersService.createAccount({ email, password });
+      const { accessToken, refreshToken } = UsersService.loginWithPassword({ email, password });
+      return res.json({ accessToken, refreshToken });
+    } catch (error) {
+      console.log(error);
+      res.status(403);
+      return res.json({
+        error: error.message,
+      });
+    }
+  });
+
+  app.post('/api/auth/token', (req, res) => {
     const { token: refreshToken } = req.body;
     if (!refreshToken) return res.sendStatus(401);
 
@@ -34,7 +52,7 @@ export default function addAuthRoutes(app) {
     }
   });
 
-  app.post('/api/logout', (req, res) => {
+  app.post('/api/auth/logout', (req, res) => {
     const { token: refreshToken } = req.body;
     UsersService.logout(refreshToken);
     return res.json({ status: 'success' });

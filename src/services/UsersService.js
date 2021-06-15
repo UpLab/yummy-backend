@@ -1,11 +1,17 @@
+import { omit } from 'lodash';
 import bcrypt from 'bcrypt';
 import AuthService from './AuthService';
 
 class UsersService {
   users = [];
 
-  async createAccount(params) {
-    const { email, password } = params;
+  #privateFields = ['hashedPassword'];
+
+  #omitPrivateFields = (user) => omit(user, this.#privateFields);
+
+  async createAccount({ email, password }) {
+    const user = this.findByEmail(email);
+    if (user) throw new Error(`User with email ${email} is already registered`);
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -20,7 +26,7 @@ class UsersService {
   }
 
   async loginWithPassword({ email, password }) {
-    const user = this.findByEmail(email);
+    const user = this.findByEmail(email, true);
 
     if (!user) throw new Error('User not found');
 
@@ -30,7 +36,9 @@ class UsersService {
     const accessToken = AuthService.generateAccessToken(user);
     const refreshToken = AuthService.generateRefreshToken(user);
 
-    return { accessToken, refreshToken, user };
+    const userWithoutPrivateFields = this.#omitPrivateFields(user);
+
+    return { accessToken, refreshToken, user: userWithoutPrivateFields };
   }
 
   loginWithRefreshToken(refreshToken) {
@@ -42,12 +50,18 @@ class UsersService {
     AuthService.invalidateRefreshToken(refreshToken);
   }
 
-  findById(id) {
-    return this.users.find((u) => u._id === id);
+  findById(id, shouldIncludePrivateFields) {
+    const user = this.users.find((u) => u._id === id);
+    if (!user) return null;
+    if (shouldIncludePrivateFields) return user;
+    return this.#omitPrivateFields(user);
   }
 
-  findByEmail(email) {
-    return this.users.find((u) => u.email === email);
+  findByEmail(email, shouldIncludePrivateFields) {
+    const user = this.users.find((u) => u.email === email);
+    if (!user) return null;
+    if (shouldIncludePrivateFields) return user;
+    return this.#omitPrivateFields(user);
   }
 }
 
