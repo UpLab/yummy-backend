@@ -11,5 +11,6 @@ module.exports = {
   rules: {
     'no-use-before-define': 0,
     'no-underscore-dangle': 0,
+    'class-methods-use-this': 0,
   },
 };
