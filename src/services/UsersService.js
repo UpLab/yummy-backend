@@ -1,32 +1,31 @@
+import bcrypt from 'bcrypt';
 import AuthService from './AuthService';
 
-/* eslint-disable class-methods-use-this */
-const users = [
-  {
-    _id: '1',
-    email: 'ihor@uplab.io',
-    password: '1234',
-  },
-  {
-    _id: '2',
-    email: 'john@uplab.io',
-    password: '1234',
-  },
-];
-
 class UsersService {
-  users = users;
+  users = [];
 
-  createAccount(userDoc) {
-    console.log(userDoc);
-    // TODO:
+  async createAccount(params) {
+    const { email, password } = params;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const userDoc = {
+      _id: (this.users.length + 1).toString(),
+      email,
+      hashedPassword,
+    };
+    this.users.push(userDoc);
+
+    console.log('Registered new user', userDoc);
   }
 
-  loginWithPassword({ email, password }) {
+  async loginWithPassword({ email, password }) {
     const user = this.findByEmail(email);
 
     if (!user) throw new Error('User not found');
-    if (user.password !== password) throw new Error('Incorrect password');
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.hashedPassword);
+    if (!isPasswordCorrect) throw new Error('Incorrect password');
 
     const accessToken = AuthService.generateAccessToken(user);
     const refreshToken = AuthService.generateRefreshToken(user);

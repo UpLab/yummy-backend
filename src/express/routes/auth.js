@@ -8,11 +8,11 @@ export default function addAuthRoutes(app) {
     return res.send(`Hello ${email}! ${1_000_000_000_000}`);
   });
 
-  app.post('/api/login', (req, res) => {
+  app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
     // TODO: validate email and password ?
     try {
-      const result = UsersService.loginWithPassword({ email, password });
+      const result = await UsersService.loginWithPassword({ email, password });
       const { accessToken, refreshToken } = result;
       return res.json({ accessToken, refreshToken });
     } catch (error) {

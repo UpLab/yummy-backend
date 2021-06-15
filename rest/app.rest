@@ -3,7 +3,7 @@ POST http://localhost:4000/api/login
 Content-Type: application/json
 
 {
-  "email": "ihor@uplab.io",
+  "email": "john@uplab.io",
   "password": "1234"
 }
 
