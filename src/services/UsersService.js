@@ -33,10 +33,10 @@ class UsersService {
     const isPasswordCorrect = await bcrypt.compare(password, user.hashedPassword);
     if (!isPasswordCorrect) throw new Error('Incorrect password');
 
-    const accessToken = AuthService.generateAccessToken(user);
-    const refreshToken = AuthService.generateRefreshToken(user);
-
     const userWithoutPrivateFields = this.#omitPrivateFields(user);
+
+    const accessToken = AuthService.generateAccessToken(userWithoutPrivateFields);
+    const refreshToken = AuthService.generateRefreshToken(userWithoutPrivateFields);
 
     return { accessToken, refreshToken, user: userWithoutPrivateFields };
   }
