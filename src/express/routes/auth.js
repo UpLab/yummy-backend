@@ -19,7 +19,7 @@ export default function addAuthRoutes(app) {
       return res.json({ accessToken, refreshToken });
     } catch (error) {
       console.log(error);
-      return res.sendStatus(404);
+      return res.sendStatus(403);
     }
   });
 
@@ -41,8 +41,9 @@ export default function addAuthRoutes(app) {
 
   app.post('/api/auth/token', (req, res) => {
     const { token: refreshToken } = req.body;
-    if (!refreshToken) return res.sendStatus(401);
+    if (!refreshToken) return res.sendStatus(403);
 
+    console.log(refreshToken);
     try {
       const { accessToken } = UsersService.loginWithRefreshToken(refreshToken);
       return res.json({ accessToken });

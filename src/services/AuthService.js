@@ -1,13 +1,15 @@
-import jwt from 'jsonwebtoken';
+import jwt, { TokenExpiredError } from 'jsonwebtoken';
 import config from '../constants/config';
 
 class AuthService {
   refreshTokens = [];
 
+  isTokenExpiredError = (error) => error instanceof TokenExpiredError;
+
   generateAccessToken(user) {
     const payload = { _id: user._id, email: user.email };
     return jwt.sign(payload, config.jwtAccessTokenSecret, {
-      expiresIn: '5m',
+      expiresIn: '5s',
     });
   }
 

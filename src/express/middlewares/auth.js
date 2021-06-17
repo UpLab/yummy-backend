@@ -11,6 +11,9 @@ const authMiddleware = (req, res, next) => {
     req.getUser = () => UsersService.findById(jwtUser._id);
     return next();
   } catch (error) {
+    if (AuthService.isTokenExpiredError(error)) {
+      return res.sendStatus(401);
+    }
     return res.sendStatus(403);
   }
 };
