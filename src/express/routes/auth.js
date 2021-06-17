@@ -43,7 +43,6 @@ export default function addAuthRoutes(app) {
     const { token: refreshToken } = req.body;
     if (!refreshToken) return res.sendStatus(403);
 
-    console.log(refreshToken);
     try {
       const { accessToken } = UsersService.loginWithRefreshToken(refreshToken);
       return res.json({ accessToken });
