@@ -9,7 +9,7 @@ class AuthService {
   generateAccessToken(user) {
     const payload = { _id: user._id, email: user.email };
     return jwt.sign(payload, config.jwtAccessTokenSecret, {
-      expiresIn: '5s',
+      expiresIn: '30m',
     });
   }
 

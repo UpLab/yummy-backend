@@ -1,17 +1,18 @@
-import MockDataService from '../../services/MockDataService';
+import RecipeService from '../../services/RecipeService';
 import authMiddleware from '../middlewares/auth';
 
 export default function addRecipeRoutes(app) {
-  app.get('/api/recipes', authMiddleware, (req, res) => {
-    res.json(MockDataService.getRecipes());
+  app.get('/api/recipes', authMiddleware, async (req, res) => {
+    const recipes = await RecipeService.getRecipes();
+    res.json(recipes);
   });
 
-  app.get('/api/recipes/:id', authMiddleware, (req, res) => {
+  app.get('/api/recipes/:id', authMiddleware, async (req, res) => {
     const { params } = req;
-    const recipe = MockDataService.findRecipeById(params.id);
+    const recipe = await RecipeService.findRecipeById(params.id);
 
     if (recipe) {
-      res.json(MockDataService.findRecipeById(params.id));
+      res.json(await RecipeService.findRecipeById(params.id));
     } else {
       res.status(500);
       res.json({
@@ -22,16 +23,16 @@ export default function addRecipeRoutes(app) {
     }
   });
 
-  app.post('/api/recipes/create', authMiddleware, (req, res) => {
+  app.post('/api/recipes/create', authMiddleware, async (req, res) => {
     const { body: recipe } = req;
 
-    MockDataService.createRecipe(recipe);
+    await RecipeService.createRecipe(recipe);
 
     res.json({ status: 'ok' });
   });
 
-  app.post('/api/recipes/reset', authMiddleware, (req, res) => {
-    MockDataService.resetRecipes();
+  app.post('/api/recipes/reset', authMiddleware, async (req, res) => {
+    await RecipeService.resetRecipes();
 
     res.json({ status: 'ok' });
   });

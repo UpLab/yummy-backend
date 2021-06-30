@@ -1,4 +1,6 @@
 import UsersService from '../services/UsersService';
+import { recipeListFactory } from '../__mocks__/recipe';
+import RecipeService from '../services/RecipeService';
 
 const defaultUsers = [
   {
@@ -11,8 +13,14 @@ const defaultUsers = [
   },
 ];
 
-export default function fixtures() {
+export default async function fixtures() {
   defaultUsers.forEach((u) => {
     UsersService.createAccount(u);
   });
+
+  const count = await RecipeService.getCollection().find({}).count();
+  if (count === 0) {
+    const recipes = recipeListFactory();
+    await Promise.all(recipes.map((recipe) => RecipeService.createRecipe(recipe)));
+  }
 }

@@ -13,6 +13,6 @@ export default async function RootLoader(app) {
   console.log('Express server started successfully');
 
   console.log('Started processing fixtures');
-  fixturesLoader();
+  await fixturesLoader();
   console.log('Fixtures processed successfully');
 }

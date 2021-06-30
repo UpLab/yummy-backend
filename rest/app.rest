@@ -52,5 +52,8 @@ Content-Type: application/json
 GET http://localhost:4000/api/auth/hello
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIxIiwiZW1haWwiOiJpaG9yQHVwbGFiLmlvIiwiaWF0IjoxNjIzNjg5NTA2LCJleHAiOjE2MjM2ODk4MDZ9.uPx-RoaI2QPS6hrBIWzFDZpqQowqnepesCrWw1fE-Fs
 
+###
 
+GET http://localhost:4000/api/recipes
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIxIiwiZW1haWwiOiJpaG9yQHVwbGFiLmlvIiwiaWF0IjoxNjI1MDc3OTMzLCJleHAiOjE2MjUwNzk3MzN9.b-ZZQVYJQlBc6l3SiO-5ezIlrMSfBF435PEbVGoeWgY
 
