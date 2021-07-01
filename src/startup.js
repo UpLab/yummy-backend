@@ -9,10 +9,15 @@ export default async function startServer() {
     await RootLoader(app);
 
     app.listen(port, () => {
-      console.log(`App listening at http://localhost:${port}`);
+      console.log(`
+        #############################################
+          Server listening on port: ${port} 
+          Address: http://localhost:${port} ️
+        #############################################
+      `);
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     process.exit(1);
   }
 }
