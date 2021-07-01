@@ -1,5 +1,6 @@
 import authMiddleware from '../middlewares/auth';
 import UsersService from '../../services/UsersService';
+import logger from '../../utils/logger';
 
 export default function addAuthRoutes(app) {
   app.get('/api/auth/greet', authMiddleware, async (req, res) => {
@@ -18,7 +19,7 @@ export default function addAuthRoutes(app) {
       const { accessToken, refreshToken } = await UsersService.loginWithPassword({ email, password });
       return res.json({ accessToken, refreshToken });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       return res.sendStatus(403);
     }
   });
@@ -31,7 +32,7 @@ export default function addAuthRoutes(app) {
       const { accessToken, refreshToken } = UsersService.loginWithPassword({ email, password });
       return res.json({ accessToken, refreshToken });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       res.status(403);
       return res.json({
         error: error.message,
@@ -47,7 +48,7 @@ export default function addAuthRoutes(app) {
       const { accessToken } = UsersService.loginWithRefreshToken(refreshToken);
       return res.json({ accessToken });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       return res.sendStatus(403);
     }
   });

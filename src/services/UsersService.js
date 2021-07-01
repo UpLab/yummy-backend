@@ -1,6 +1,7 @@
 import { omit } from 'lodash';
 import bcrypt from 'bcrypt';
 import AuthService from './AuthService';
+import logger from '../utils/logger';
 
 class UsersService {
   users = [];
@@ -22,7 +23,7 @@ class UsersService {
     };
     this.users.push(userDoc);
 
-    console.log('Registered new user', userDoc);
+    logger.info(`Registered new user with email: ${userDoc.email}`);
   }
 
   async loginWithPassword({ email, password }) {

@@ -1,5 +1,6 @@
 import express from 'express';
 import RootLoader from './loaders';
+import logger from './utils/logger';
 
 export default async function startServer() {
   try {
@@ -9,7 +10,7 @@ export default async function startServer() {
     await RootLoader(app);
 
     app.listen(port, () => {
-      console.log(`
+      logger.info(`
         #############################################
           Server listening on port: ${port} 
           Address: http://localhost:${port} ️
@@ -17,7 +18,7 @@ export default async function startServer() {
       `);
     });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     process.exit(1);
   }
 }
