@@ -1,6 +1,7 @@
 import UsersService from '../services/UsersService';
 import { recipeListFactory } from '../__mocks__/recipe';
 import RecipeService from '../services/RecipeService';
+import logger from '../utils/logger';
 
 const defaultUsers = [
   {
@@ -14,8 +15,14 @@ const defaultUsers = [
 ];
 
 export default async function fixtures() {
-  defaultUsers.forEach((u) => {
-    UsersService.createAccount(u);
+  defaultUsers.forEach(async (u) => {
+    try {
+      await UsersService.createAccount(u);
+    } catch (error) {
+      if (error.message.includes('already registered')) return;
+      logger.error(error);
+      throw error;
+    }
   });
 
   const count = await RecipeService.getCollection().find({}).count();

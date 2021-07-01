@@ -2,32 +2,37 @@ import { omit } from 'lodash';
 import bcrypt from 'bcrypt';
 import AuthService from './AuthService';
 import logger from '../utils/logger';
+import MongoClientProvider from './MongoClientProvider';
 
 class UsersService {
-  users = [];
+  collectionName = 'users';
+
+  getCollection() {
+    return MongoClientProvider.db.collection(this.collectionName);
+  }
 
   #privateFields = ['hashedPassword'];
 
   #omitPrivateFields = (user) => omit(user, this.#privateFields);
 
   async createAccount({ email, password }) {
-    const user = this.findByEmail(email);
+    const user = await this.findByEmail(email);
     if (user) throw new Error(`User with email ${email} is already registered`);
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const userDoc = {
-      _id: (this.users.length + 1).toString(),
       email,
       hashedPassword,
+      createdAt: new Date(),
     };
-    this.users.push(userDoc);
+    await this.getCollection().insert(userDoc);
 
     logger.info(`Registered new user with email: ${userDoc.email}`);
   }
 
   async loginWithPassword({ email, password }) {
-    const user = this.findByEmail(email, true);
+    const user = await this.findByEmail(email, true);
 
     if (!user) throw new Error('User not found');
 
@@ -51,15 +56,15 @@ class UsersService {
     AuthService.invalidateRefreshToken(refreshToken);
   }
 
-  findById(id, shouldIncludePrivateFields) {
-    const user = this.users.find((u) => u._id === id);
+  async findById(_id, shouldIncludePrivateFields) {
+    const user = await this.getCollection().findOne({ _id });
     if (!user) return null;
     if (shouldIncludePrivateFields) return user;
     return this.#omitPrivateFields(user);
   }
 
-  findByEmail(email, shouldIncludePrivateFields) {
-    const user = this.users.find((u) => u.email === email);
+  async findByEmail(email, shouldIncludePrivateFields) {
+    const user = await this.getCollection().findOne({ email });
     if (!user) return null;
     if (shouldIncludePrivateFields) return user;
     return this.#omitPrivateFields(user);
