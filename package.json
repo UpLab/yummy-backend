@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "",
   "main": "src/index.js",
+  "engines": {
+    "npm": "6",
+    "node": "14"
+  },
   "scripts": {
     "mongo:start": "mongod --config ./mongod.conf --fork",
     "mongo:stop": "mongo admin --port 4001 --eval \"db.getSiblingDB('admin').shutdownServer()\" > /dev/null",
