@@ -1,9 +1,13 @@
 # yummy-backend
 
+## Prerequisites
+
+- Install Node.js (v14, npm 6)
+- Install MongoDB community server
+
 ## Setup
 
 `npm install`
-
 
 ## Start
 
