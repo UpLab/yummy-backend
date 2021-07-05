@@ -10,7 +10,7 @@ function foodImageFactory({ width = 320, height = 240 } = {}) {
 export function recipeFactory() {
   const images = [...new Array(faker.datatype.number({ min: 1, max: 4 }))].map(() => foodImageFactory());
   return {
-    _id: faker.datatype.uuid(),
+    // _id: faker.datatype.uuid(),
     name: faker.lorem.words(),
     featuredImage: images[0],
     images,

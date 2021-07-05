@@ -1,3 +1,4 @@
+import mongo from 'mongodb';
 import { omit } from 'lodash';
 import bcrypt from 'bcrypt';
 import AuthService from './AuthService';
@@ -57,7 +58,8 @@ class UsersService {
   }
 
   async findById(_id, shouldIncludePrivateFields) {
-    const user = await this.getCollection().findOne({ _id });
+    const objectId = new mongo.ObjectID(_id);
+    const user = await this.getCollection().findOne({ _id: objectId });
     if (!user) return null;
     if (shouldIncludePrivateFields) return user;
     return this.#omitPrivateFields(user);

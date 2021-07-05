@@ -1,3 +1,4 @@
+import mongo from 'mongodb';
 import MongoClientProvider from './MongoClientProvider';
 
 class MockDataService {
@@ -12,7 +13,8 @@ class MockDataService {
   }
 
   async findRecipeById(_id) {
-    return this.getCollection().findOne({ _id });
+    const objectId = new mongo.ObjectID(_id);
+    return this.getCollection().findOne({ _id: objectId });
   }
 
   async createRecipe(recipe) {
