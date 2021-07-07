@@ -1,7 +1,7 @@
 import mongo from 'mongodb';
 import MongoClientProvider from './MongoClientProvider';
 
-class MockDataService {
+class RecipeService {
   collectionName = 'recipes';
 
   getCollection() {
@@ -17,11 +17,17 @@ class MockDataService {
     return this.getCollection().findOne({ _id: objectId });
   }
 
-  async createRecipe(recipe) {
-    // TODO: validate?
+  async createRecipe(recipe, context) {
+    // TODO: validate
     const doc = { ...recipe, createdAt: new Date() };
     await this.getCollection().insert(doc);
     return recipe;
+  }
+
+  async updateRecipe(_id, data, context) {
+    // TODO: validate
+    // TODO: authorization
+    await this.getCollection().updateOne({ _id: new mongo.ObjectID(_id) }, { $set: data });
   }
 
   async resetRecipes() {
@@ -29,4 +35,4 @@ class MockDataService {
   }
 }
 
-export default new MockDataService();
+export default new RecipeService();
