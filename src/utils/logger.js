@@ -1,6 +1,13 @@
 import winston from 'winston';
 import config from '../constants/config';
 
+const errorStackFormat = winston.format((info) => {
+  if (info instanceof Error) {
+    return { ...info, stack: info.stack, message: info.message };
+  }
+  return info;
+});
+
 const format = config.isProduction
   ? winston.format.combine(
       winston.format.timestamp({

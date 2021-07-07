@@ -1,6 +1,6 @@
 import UsersService from '../services/UsersService';
-import { recipeListFactory } from '../__mocks__/recipe';
-import RecipeService from '../services/RecipeService';
+// import { recipeListFactory } from '../__mocks__/recipe';
+// import RecipeService from '../services/RecipeService';
 import logger from '../utils/logger';
 
 const defaultUsers = [
@@ -25,9 +25,9 @@ export default async function fixtures() {
     }
   });
 
-  const count = await RecipeService.getCollection().find({}).count();
-  if (count === 0) {
-    const recipes = recipeListFactory();
-    await Promise.all(recipes.map((recipe) => RecipeService.createRecipe(recipe)));
-  }
+  // const count = await RecipeService.getCollection().find({}).count();
+  // if (count === 0) {
+  //   const recipes = recipeListFactory();
+  //   await Promise.all(recipes.map((recipe) => RecipeService.createRecipe(recipe)));
+  // }
 }

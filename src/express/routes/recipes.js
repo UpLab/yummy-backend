@@ -16,12 +16,11 @@ const wrapPromiseHandler =
     try {
       await handler(...args);
     } catch (error) {
+      console.error(error);
       logger.error(error);
       res.status(500);
       res.json({
-        error: {
-          message: 'Internal server error',
-        },
+        error: 'Internal server error',
       });
     }
   };
@@ -35,16 +34,26 @@ const findRecipeMiddleware = wrapPromiseHandler(async (req, res, next) => {
   }
   res.status(404);
   res.json({
-    error: {
-      message: 'Recipe not found',
-    },
+    error: 'Recipe not found',
   });
   return null;
 });
 
+const canViewRecipeMiddleware = (req, res, next) => {
+  const canViewRecipe = RecipeService.canViewRecipe(req.recipe, req.jwtUser._id);
+  if (!canViewRecipe) {
+    res.status(403);
+    res.json({
+      error: 'Access denied',
+    });
+  } else {
+    next();
+  }
+};
+
 class RecipeRoutesController {
-  getRecipes = async (req, res) => {
-    const recipes = await RecipeService.getRecipes({}, createContext(req));
+  getUserRecipes = async (req, res) => {
+    const recipes = await RecipeService.getUserRecipes({}, createContext(req));
     res.json(recipes);
   };
 
@@ -83,24 +92,26 @@ class RecipeRoutesController {
 const recipeRoutesController = new RecipeRoutesController();
 
 export default function addRecipeRoutes(app) {
-  app.get('/api/recipes', authMiddleware, wrapPromiseHandler(recipeRoutesController.getRecipes));
+  app.get('/api/recipes', authMiddleware, wrapPromiseHandler(recipeRoutesController.getUserRecipes));
 
   app.get(
     '/api/recipes/:recipeId',
     authMiddleware,
     findRecipeMiddleware,
+    canViewRecipeMiddleware,
     wrapPromiseHandler(recipeRoutesController.getRecipeById),
-  );
-
-  app.post(
-    '/api/recipes/:recipeId',
-    authMiddleware,
-    findRecipeMiddleware,
-    wrapPromiseHandler(recipeRoutesController.updateRecipeById),
   );
 
   app.post('/api/recipes/create', authMiddleware, wrapPromiseHandler(recipeRoutesController.createRecipe));
 
   // TODO: remove reset method
   app.post('/api/recipes/reset', authMiddleware, wrapPromiseHandler(recipeRoutesController.resetRecipes));
+
+  app.post(
+    '/api/recipes/:recipeId',
+    authMiddleware,
+    findRecipeMiddleware,
+    canViewRecipeMiddleware,
+    wrapPromiseHandler(recipeRoutesController.updateRecipeById),
+  );
 }

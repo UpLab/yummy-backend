@@ -4,12 +4,23 @@ import MongoClientProvider from './MongoClientProvider';
 class RecipeService {
   collectionName = 'recipes';
 
+  canViewRecipe = (recipe, userId) => {
+    const authorObjectId = new mongo.ObjectId(recipe.authorId);
+    const userObjectId = new mongo.ObjectId(userId);
+
+    if (authorObjectId.equals(userObjectId)) return true;
+    return false;
+  };
+
   getCollection() {
     return MongoClientProvider.db.collection(this.collectionName);
   }
 
-  async getRecipes() {
-    return this.getCollection().find({}).sort({ createdAt: -1 }).toArray();
+  async getUserRecipes(query = {}, context) {
+    return this.getCollection()
+      .find({ authorId: new mongo.ObjectId(context.userId), ...query })
+      .sort({ createdAt: -1 })
+      .toArray();
   }
 
   async findRecipeById(_id) {
@@ -19,15 +30,22 @@ class RecipeService {
 
   async createRecipe(recipe, context) {
     // TODO: validate
-    const doc = { ...recipe, createdAt: new Date() };
+    const doc = {
+      ...recipe,
+      authorId: new mongo.ObjectId(context.userId),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
     await this.getCollection().insert(doc);
     return recipe;
   }
 
-  async updateRecipe(_id, data, context) {
+  async updateRecipe(_id, data) {
     // TODO: validate
-    // TODO: authorization
-    await this.getCollection().updateOne({ _id: new mongo.ObjectID(_id) }, { $set: data });
+    await this.getCollection().updateOne(
+      { _id: new mongo.ObjectID(_id) },
+      { $set: { ...data, updatedAt: new Date() } },
+    );
   }
 
   async resetRecipes() {
