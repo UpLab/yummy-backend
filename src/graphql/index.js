@@ -8,6 +8,7 @@ const getUserContext = ({ req }) => {
   const token = authHeader;
 
   const ctx = {
+    userId: null,
     jwtUser: null,
     getUser: () => null,
   };
@@ -16,6 +17,7 @@ const getUserContext = ({ req }) => {
     const jwtUser = AuthService.verifyAccessToken(token);
     return {
       ...ctx,
+      userId: jwtUser._id,
       jwtUser,
       getUser: () => UsersService.findById(jwtUser._id),
     };

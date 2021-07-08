@@ -36,8 +36,9 @@ class RecipeService {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    await this.getCollection().insertOne(doc);
-    return recipe;
+    const res = await this.getCollection().insertOne(doc);
+    const _id = res.insertedId;
+    return { ...recipe, _id };
   }
 
   async updateRecipe(_id, data) {
