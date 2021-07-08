@@ -2,6 +2,7 @@ import { ApolloServer } from 'apollo-server-express';
 import AuthService from '../services/AuthService';
 import UsersService from '../services/UsersService';
 import { typeDefs, resolvers } from './schema';
+import AuthDirective, { typeDefs as authDirectiveTypeDefs } from './directives/auth';
 
 const getUserContext = ({ req }) => {
   const authHeader = req.headers.authorization;
@@ -27,12 +28,15 @@ const getUserContext = ({ req }) => {
 };
 
 const server = new ApolloServer({
-  typeDefs,
+  typeDefs: [authDirectiveTypeDefs, ...typeDefs],
   resolvers,
   context: (expressContext) => {
     return {
       ...getUserContext(expressContext),
     };
+  },
+  schemaDirectives: {
+    auth: AuthDirective,
   },
 });
 

@@ -38,8 +38,8 @@ export const typeDefs = gql`
   }
 
   extend type Query {
-    userRecipes: [Recipe]!
-    recipe(recipeId: ID!): Recipe!
+    userRecipes: [Recipe]! @auth
+    recipe(recipeId: ID!): Recipe! @auth
   }
 
   input RecipeCreateInput {
@@ -71,9 +71,9 @@ export const typeDefs = gql`
   }
 
   extend type Mutation {
-    createRecipe(input: RecipeCreateInput!): Recipe!
-    updateRecipe(recipeId: ID!, input: RecipeUpdateInput!): Recipe!
-    deleteRecipe(recipeId: ID!): Boolean
+    createRecipe(input: RecipeCreateInput!): Recipe! @auth
+    updateRecipe(recipeId: ID!, input: RecipeUpdateInput!): Recipe! @auth
+    deleteRecipe(recipeId: ID!): Boolean @auth
   }
 `;
 
