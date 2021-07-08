@@ -14,6 +14,7 @@ export default async function startServer() {
         #############################################
           Server listening on port: ${port} 
           Address: http://localhost:${port} ️
+          GraphQL: http://localhost:${port}/graphql ️
         #############################################
       `);
     });

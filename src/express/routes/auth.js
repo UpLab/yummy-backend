@@ -29,7 +29,7 @@ export default function addAuthRoutes(app) {
     // TODO: validate email and password ?
     try {
       await UsersService.createAccount({ email, password });
-      const { accessToken, refreshToken } = UsersService.loginWithPassword({ email, password });
+      const { accessToken, refreshToken } = await UsersService.loginWithPassword({ email, password });
       return res.json({ accessToken, refreshToken });
     } catch (error) {
       logger.error(error);
