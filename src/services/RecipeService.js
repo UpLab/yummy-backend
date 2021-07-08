@@ -36,7 +36,7 @@ class RecipeService {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    await this.getCollection().insert(doc);
+    await this.getCollection().insertOne(doc);
     return recipe;
   }
 
@@ -50,6 +50,10 @@ class RecipeService {
 
   async resetRecipes() {
     await this.getCollection().remove({});
+  }
+
+  async deleteRecipeById(recipeId) {
+    await this.getCollection().deleteOne({ _id: new mongo.ObjectID(recipeId) });
   }
 }
 

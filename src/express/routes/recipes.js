@@ -1,3 +1,4 @@
+import config from '../../constants/config';
 import RecipeService from '../../services/RecipeService';
 import logger from '../../utils/logger';
 import authMiddleware from '../middlewares/auth';
@@ -87,6 +88,13 @@ class RecipeRoutesController {
 
     res.json({ status: 'ok' });
   };
+
+  deleteRecipe = async (req, res) => {
+    const { recipeId } = req.params;
+
+    await RecipeService.deleteRecipeById(recipeId);
+    res.json({ status: 'ok' });
+  };
 }
 
 const recipeRoutesController = new RecipeRoutesController();
@@ -105,7 +113,9 @@ export default function addRecipeRoutes(app) {
   app.post('/api/recipes/create', authMiddleware, wrapPromiseHandler(recipeRoutesController.createRecipe));
 
   // TODO: remove reset method
-  app.post('/api/recipes/reset', authMiddleware, wrapPromiseHandler(recipeRoutesController.resetRecipes));
+  if (config.isDevelopment) {
+    app.post('/api/recipes/reset', authMiddleware, wrapPromiseHandler(recipeRoutesController.resetRecipes));
+  }
 
   app.post(
     '/api/recipes/:recipeId',
@@ -113,5 +123,13 @@ export default function addRecipeRoutes(app) {
     findRecipeMiddleware,
     canViewRecipeMiddleware,
     wrapPromiseHandler(recipeRoutesController.updateRecipeById),
+  );
+
+  app.delete(
+    '/api/recipes/:recipeId',
+    authMiddleware,
+    findRecipeMiddleware,
+    canViewRecipeMiddleware,
+    wrapPromiseHandler(recipeRoutesController.deleteRecipe),
   );
 }
