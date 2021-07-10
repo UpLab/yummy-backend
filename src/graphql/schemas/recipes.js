@@ -17,6 +17,8 @@ export const typeDefs = gql`
     notes: String!
     instructions: [String]!
     ingredients: [RecipeIngredient]!
+    createdAt: Float!
+    updatedAt: Float!
   }
 
   type RecipeIngredient {
